@@ -33,7 +33,7 @@ confirm() {
 DEPLOY_DIR="${DEPLOY_DIR:-/opt/hub}"
 COMPOSE_FILE="${DEPLOY_DIR}/docker-compose.yml"
 TAG="${TAG:-latest}"
-IMAGE="ghcr.io/ucode/hub:${TAG}"
+IMAGE="ghcr.io/easyx-dev/ucode-hub:${TAG}"
 APP_CONTAINER="hub-app"
 
 if [ ! -f "$DEPLOY_DIR/.env" ]; then

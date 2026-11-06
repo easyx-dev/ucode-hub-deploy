@@ -2,7 +2,8 @@
 
 hub 的生产部署仓：部署配置与运维脚本都在这里，服务器上把本仓检出到 `/opt/hub/` 后执行 `./deploy.sh` 即完成部署
 （检出目录就是部署目录，可用 `DEPLOY_DIR` 环境变量覆盖）。生产环境只需拉本仓，不必拉 hub 源码仓——
-应用以镜像形式运行（`ghcr.io/ucode/hub:${TAG}`），镜像由 [ucode-hub](https://github.com/easyx-dev/ucode-hub) 仓构建推送。
+应用以镜像形式运行（`ghcr.io/easyx-dev/ucode-hub:${TAG}`），镜像由 [ucode-hub](https://github.com/easyx-dev/ucode-hub)
+仓的 CI 在 `v*` tag 上构建推送：`TAG` 取该仓的版本 tag（如 `v0.1.0`），`latest` 跟随最近一次推送。
 
 应用源码、迁移文件与变量校验规则的事实源在 hub 仓（`app/src/env.ts`）；本仓只负责 compose 声明、部署与运维脚本、
 反代样例与变量模板，两者同步时以镜像 tag 为界：换 tag 即换应用版本，本仓的配置变更独立于应用版本。
@@ -42,6 +43,9 @@ git pull
 TAG=latest ./deploy.sh
 ```
 
+> 镜像在 GHCR 上。包若为 private，`docker compose pull` 会因未登录失败：先用带 `read:packages` 的 PAT 登录
+> （`echo <PAT> | docker login ghcr.io -u <GitHub 用户名> --password-stdin`），登录态存在 `~/.docker/config.json`，一次即可。
+>
 > 本仓只增删工作区里的配置文件：`volumes/`（应用数据 + 库）、`backup/`、`.env` 都已在 `.gitignore` 中排除，
 > `git pull` 不会碰它们。
 
@@ -54,7 +58,7 @@ TAG=latest ./deploy.sh
             │  proxy_pass http://127.0.0.1:3009
             ▼
     docker compose
-    └── app (hub-app :3009)    # 镜像 ghcr.io/ucode/hub:${TAG}，nodejs 用户运行
+    └── app (hub-app :3009)    # 镜像 ghcr.io/easyx-dev/ucode-hub:${TAG}，nodejs 用户运行
           └── volumes/app       # 应用数据 + SQLite 库 data.db（宿主属主 1001:1001）
 ```
 

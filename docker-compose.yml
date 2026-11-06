@@ -15,7 +15,7 @@
 
 services:
   app:
-    image: ghcr.io/ucode/hub:${TAG:-latest}
+    image: ghcr.io/easyx-dev/ucode-hub:${TAG:-latest}
     container_name: hub-app
     ports:
       - "127.0.0.1:${APP_PORT:-3009}:3009"
